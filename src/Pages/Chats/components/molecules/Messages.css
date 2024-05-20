@@ -1,0 +1,20 @@
+.Messages{
+    width: calc(100% - 2vw);
+    height:calc( 93vh - 2vw );
+    padding: 1vw;
+    overflow-y: scroll;
+    display: flex;
+    gap: 1vw;
+    position: relative;
+    flex-direction: column; 
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.message-left {
+    align-self: flex-start;
+}
+
+.message-right {
+    align-self: flex-end;
+}

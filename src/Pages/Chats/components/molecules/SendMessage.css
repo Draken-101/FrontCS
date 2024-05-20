@@ -1,0 +1,21 @@
+.SendMessage {
+    width: 100%;
+    height: 7vh;
+    background-color: rgb(39, 48, 55);
+    display: grid;
+    grid-template-columns: calc(100% - 7vh) 7vh;
+    align-items: center;
+    input {
+        padding-left: 1vw;
+        background-color: transparent;
+        width: calc(80% - 1vw);
+        height: 5vh;
+        font-size: 1.5vw;
+        text-decoration: none;
+        border: 0;
+        outline: none;
+        color: white;
+        font-weight: 300;
+    }
+
+}
