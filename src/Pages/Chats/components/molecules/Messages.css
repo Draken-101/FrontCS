@@ -1,6 +1,6 @@
 .Messages{
     width: calc(100% - 2vw);
-    height:calc( 93vh - 2vw );
+    height:calc( 83vh - 2vw );
     padding: 1vw;
     overflow-y: scroll;
     display: flex;

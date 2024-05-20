@@ -1,34 +1,42 @@
-.ConainerContact{
-    background-color: #626262;
+.ConainerContact {
+    background-color: #858484;
     display: grid;
-    grid-template-columns: 1fr 10fr .2fr;
+    grid-template-columns: 10fr 1fr .2fr;
+    grid-template-rows: 1fr;
     width: calc(100% - 4vw);
-    padding: 1vw;
+    align-items: center;
+    padding: .5vw 1vw;
     gap: 1vw;
     height: 6vh;
     margin: .5vw 1vw;
+    height: fit-content;
     border-radius: .2vw;
-    span{
+
+    span {
         color: #ffffff;
-        font-size: 2vw;
+        font-size: 1.5vw;
     }
-    div{
+
+    div {
         display: flex;
         justify-content: center;
         flex-direction: column;
     }
 }
-.lastMessage{
-    font-size: 1.2vw !important;
+
+.lastMessage {
+    font-size: 1vw !important;
     color: #ffffff;
 }
-.lastTime{
+
+.lastTime {
     font-weight: 200;
-    font-size: 1.2vw !important;
+    font-size: 1vw !important;
     color: #626262;
 }
-.checkmark{
-    font-size: 1.2vw !important;
+
+.checkmark {
+    font-size: 1vw !important;
     justify-content: center;
     display: flex;
 }
