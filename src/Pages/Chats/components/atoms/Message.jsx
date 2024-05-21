@@ -10,7 +10,7 @@ export const Message = styled.span`
     position: relative;
     span{
         align-self: self-end;
-        font-size: 1vw !important;
+        font-size: .7vw !important;
         font-weight: 300;
         color: #a3a3a3;
     }

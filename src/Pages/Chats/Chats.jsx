@@ -4,11 +4,11 @@ import { Contacts } from "./components/organims/Contacts";
 import styled from 'styled-components';
 import axios from "axios";
 const Container = styled.div`
-    width: 90vw;
+    width: calc(100vw - 10vh);
     border-radius: .4vw;
     overflow: hidden;
     background-color: #081f34;
-    margin: 5vh 5vw;
+    margin: 5vh;
     justify-content: center;
     display: flex;
 `;

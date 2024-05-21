@@ -11,8 +11,11 @@ const Btn = styled.button`
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: 50%;
-    filter: contrast(0%) brightness(100);
+    filter: contrast(0%) brightness(2);
     cursor: pointer;
+    &:hover{
+        filter: contrast(30%) brightness(2);
+    }
 `;
 export function SendMessage(){
     return(

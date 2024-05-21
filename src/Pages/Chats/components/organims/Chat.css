@@ -1,5 +1,5 @@
 .Chat{
-    width: 55vw;
+    width: calc(60vw - 5vh);
     height: 90vh;
     display: flex;
     flex-wrap: wrap;
