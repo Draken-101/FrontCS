@@ -1,12 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import "./login.css";
+import { useNavigate } from "react-router-dom";
 
 export function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogin = async (event) => {
         event.preventDefault(); 
@@ -18,7 +20,7 @@ export function Login() {
             const response = await axios.post('http://localhost:3000/auth/singin', { username, password });
 
             if (response.status === 200) {
-                localStorage.setItem("idUser", response.data.idUser);
+                localStorage.setItem("idUser1", response.data.idUser);
                 localStorage.setItem("amigos", response.data.amigos);
                 localStorage.setItem("token", response.data.token);
                 console.log('Autenticación exitosa. Token:', response.data.token);
@@ -30,6 +32,7 @@ export function Login() {
         } finally {
             setLoading(false);
         }
+        navigate('/Chats')
     };
 
     return (

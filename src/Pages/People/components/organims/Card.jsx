@@ -41,7 +41,8 @@ export function Card({data}){
             <div>
                 <h2>{data.username}</h2>
                 <button onClick={()=>{
-                    navigate(`/Chats/${data._id}`)
+                    localStorage.setItem('idNewContact', data._id)
+                    navigate(`/Chats`)
                 }}>Chatear</button>
             </div>
         </C>

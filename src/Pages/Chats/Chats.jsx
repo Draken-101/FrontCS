@@ -15,7 +15,6 @@ const Container = styled.div`
 export function Chats() {
     const [chatInUse, setChatInUse] = useState({});
     const [contacts, setcontacts] = useState([]);
-    const { idNewContact } = useParams();
     const [socket, setSocket] = useState(null);
     useEffect(() => {
 
@@ -26,12 +25,6 @@ export function Chats() {
                 console.log('Conexión WebSocket abierta');
                 setSocket(ws);
 
-                ws.send(JSON.stringify({
-                    token: localStorage.getItem('token'),
-                    event: "getChat",
-                    idUser1: localStorage.getItem('idUser'),
-                    idUser2: idNewContact ? idNewContact : chatInUse.idChat
-                }))
             };
 
             ws.onclose = () => {
@@ -42,19 +35,27 @@ export function Chats() {
             ws.onmessage = (event) => {
                 const dataJson = JSON.parse(event.data);
                 console.log('Mensaje recibido desde el servidor:', dataJson);
+                switch (dataJson.event) {
+                    case 'newMessage':
+                        
+                        break;
+                
+                    default:
+                        break;
+                }
             };
 
             ws.onerror = (error) => {
                 console.error('Error en la conexión WebSocket:', error);
             };
 
-            const objet = idNewContact ? {
-                idUser: localStorage.getItem("idUser"),
-                idContact: idNewContact
+            const objet = localStorage.getItem('idNewContact') ? {
+                idUser: localStorage.getItem("idUser1"),
+                idContact: localStorage.getItem('idNewContact')
             }
                 :
                 {
-                    idUser: localStorage.getItem("idUser"),
+                    idUser: localStorage.getItem("idUser1"),
                     amigos: JSON.stringify(localStorage.getItem("amigos"))
                 };
             let headers = {
@@ -62,12 +63,21 @@ export function Chats() {
                 'token': localStorage.getItem('token')
             }
             const body = JSON.stringify(objet);
-            const fetchedContacts = await axios.post(`http://localhost:3000/users/${idNewContact ? "getContact" : "contacts"}`, body, { headers: headers });
-            setcontacts([fetchedContacts.data]);
+            const fetchedContacts = await axios.post(`http://localhost:3000/users/${localStorage.getItem('idNewContact') ? "getContact" : "contacts"}`, body, { headers: headers });
+            setcontacts([...contacts, fetchedContacts.data]);
         }
         peticion();
 
     }, []);
+
+    const getChat = () => {
+        socket.send(JSON.stringify({
+            token: localStorage.getItem('token'),
+            event: "getChat",
+            idUser1: localStorage.getItem('idUser1'),
+            idUser2: localStorage.getItem('idNewContact') || localStorage.getItem('idUser2')
+        }))
+    }
 
     const sendMessage = (mensaje) => {
         if (socket) {
