@@ -1,0 +1,51 @@
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+}
+.formLogin{
+    width:30vw;
+    height:70vh;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    border-radius: 2%;
+}
+
+.title{
+    font-size: 2.5rem;
+    color: black;
+    text-align: center;
+}
+
+.usernameBoton{
+    width:50%;
+    height: 7%;
+    color: black;
+    margin-top: 40px;
+    padding-left: 5px; 
+}
+
+.contraseñaBoton{
+    width:50%;
+    height: 7%;
+    color: black;
+    margin-top: 15px;
+    padding-left: 5px; 
+}
+
+.loginBoton{
+    width:27%;
+    height: 7%;
+    color: black;
+    margin-top: 25px;
+}

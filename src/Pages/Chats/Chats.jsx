@@ -12,6 +12,7 @@ const Container = styled.div`
     justify-content: center;
     display: flex;
 `;
+
 export function Chats() {
     const [chatInUse, setChatInUse] = useState('');
     const [contacts, setcontacts] = useState([]);
@@ -25,3 +26,5 @@ export function Chats() {
         </Container>
     )
 }
+
+
