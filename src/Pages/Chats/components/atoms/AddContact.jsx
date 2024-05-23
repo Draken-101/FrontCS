@@ -5,7 +5,7 @@ export const AddContact = styled.button`
     font-size: 1.2vw;
     border-radius: 0.2vw;
     width: fit-content;
-    height: fit-content;
+    height: 5vh;
     padding: .8vw 1.5vw;
     background-color: #00325f;
     display: flex;

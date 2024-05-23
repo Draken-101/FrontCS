@@ -18,6 +18,9 @@ export function Login() {
             const response = await axios.post('http://localhost:3000/auth/singin', { username, password });
 
             if (response.status === 200) {
+                localStorage.setItem("idUser", response.data.idUser);
+                localStorage.setItem("amigos", response.data.amigos);
+                localStorage.setItem("token", response.data.token);
                 console.log('Autenticación exitosa. Token:', response.data.token);
             } else {
                 setError('Error en la autenticación: ' + response.data.message);

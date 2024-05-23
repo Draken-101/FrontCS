@@ -3,12 +3,11 @@
     display: grid;
     grid-template-columns: 10fr 1fr .2fr;
     grid-template-rows: 1fr;
-    width: calc(100% - 4vw);
+    width: calc(100% - 2vw);
     align-items: center;
     padding: .5vw 1vw;
     gap: 1vw;
     height: 6vh;
-    margin: .5vw 1vw;
     height: fit-content;
     border-radius: .2vw;
 

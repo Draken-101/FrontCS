@@ -4,18 +4,14 @@ import { SendMessage } from '../molecules/SendMessage'
 import './Chat.css'
 import { useEffect, useState } from 'react';
 
-export function Chat({chatInUse}){
+export function Chat({chatInUse, idContact, sendMessage}){
     const [data, setData] = useState([]);
-    useEffect(() => {
-        axios.get('http://localhost:3000/',)
-        .then(res => {
-            setData(res.data.Messages)
-        })
-    }, []);
+    // useEffect(async() => {
+    // }, []);
     return(
         <div className='Chat'> 
             <Messages menssges={data}/>
-            <SendMessage/>
+            <SendMessage sendMessage={sendMessage} idChat={chatInUse} idContact={idContact}/>
         </div>  
     )
 }
