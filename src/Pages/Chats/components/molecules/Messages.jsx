@@ -5,21 +5,21 @@ export function Messages({ mensajes }) {
         <div className='Messages'>
             {
                 mensajes?.map(mensaje => {
-                    if (mensaje.idUser === localStorage.getItem('idUser')) {
+                    if (mensaje?.idUser === localStorage.getItem('idUser')) {
                         return (
-                            <Message className='message-right'>
-                                {data.message}
+                            <Message className='message-left'>
+                                {mensaje?.mensaje}
                                 <span>
-                                    {data.date}
+                                    {mensaje?.date}
                                 </span>
                             </Message>
                         )
                     } else {
                         return (
-                            <Message className='message-left'>
-                                {mensaje.mensaje}
+                            <Message className='message-right'>
+                                {mensaje?.mensaje}
                                 <span>
-                                    {data.date}
+                                    {mensaje?.date}
                                 </span>
                             </Message>
                         )

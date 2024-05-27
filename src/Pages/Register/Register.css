@@ -19,6 +19,24 @@ body {
     justify-content: center;
     align-items: center; 
     border-radius: 2%;
+    
+    div {
+        margin-top: 1vw;
+        width: fit-content;
+        display: flex;
+        justify-content: center;
+
+        span {
+            display: flex;
+            width: 100%;
+            color: black;
+        }
+
+        li {
+            color: blue;
+            list-style: none;
+        }
+    }
 }
 
 .title{

@@ -23,7 +23,7 @@ export function People() {
                     'token': localStorage.getItem('token')
                 }
                 const body = JSON.stringify({
-                    idUser:localStorage.getItem('idUser')
+                    idUser1:localStorage.getItem('idUser1')
                 });
                 const fetchedContacts = await axios.post('http://localhost:3000/users/allContacts', body, { headers: headers });
                 setcontacts(fetchedContacts.data);

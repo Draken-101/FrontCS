@@ -18,7 +18,7 @@ const Btn = styled.button`
         filter: contrast(30%) brightness(2);
     }
 `;
-export function SendMessage({ idChat, idContact, sendMessage }) {
+export function SendMessage({ sendMessage }) {
     const [mensaje, setmensaje] = useState();
     return (
         <div className='SendMessage'>

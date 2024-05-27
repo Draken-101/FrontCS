@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import "./login.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function Login() {
     const [username, setUsername] = useState('');
@@ -11,7 +11,7 @@ export function Login() {
     const navigate = useNavigate();
 
     const handleLogin = async (event) => {
-        event.preventDefault(); 
+        event.preventDefault();
 
         setError('');
         setLoading(true);
@@ -20,8 +20,8 @@ export function Login() {
             const response = await axios.post('http://localhost:3000/auth/singin', { username, password });
 
             if (response.status === 200) {
-                localStorage.setItem("idUser1", response.data.idUser);
-                localStorage.setItem("amigos", response.data.amigos);
+                localStorage.setItem("idUser1", response.data.idUser1);
+                localStorage.setItem("amigos", JSON.stringify(response.data.amigos));
                 localStorage.setItem("token", response.data.token);
                 console.log('Autenticación exitosa. Token:', response.data.token);
             } else {
@@ -39,7 +39,7 @@ export function Login() {
         <div className="Login">
             {error && <div className="error">{error}</div>}
             <form className="formLogin" onSubmit={handleLogin}>
-            <h1 className="title">LOGIN</h1>
+                <h1 className="title">LOGIN</h1>
                 <input
                     className="usernameBoton"
                     placeholder="Username"
@@ -57,6 +57,16 @@ export function Login() {
                 <button className="loginBoton" type="submit" disabled={loading}>
                     {loading ? 'Loading...' : 'Login'}
                 </button>
+                <div>
+                    <span>
+                        Si no tienes cuenta
+                        <Link to="/Register" style={{ marginLeft: '.5vw', color:"blue" }}>
+                            <span>
+                                Registrate
+                            </span>
+                        </Link>
+                    </span>
+                </div>
             </form>
         </div>
     );

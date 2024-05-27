@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./Register.css";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export function Register() {
     const [username, setUsername] = useState('');
@@ -59,6 +60,16 @@ export function Register() {
                 <button className="RegisterBoton" type="submit" disabled={loading}>
                     {loading ? 'Loading...' : 'Register'}
                 </button>
+                <div>
+                    <span>
+                        Si ya tienes cuenta
+                        <Link to="/Login" style={{ marginLeft: '.5vw', color:"blue" }}>
+                            <span>
+                                Inicia Sesion
+                            </span>
+                        </Link>
+                    </span>
+                </div>
             </form>
         </div>
     );

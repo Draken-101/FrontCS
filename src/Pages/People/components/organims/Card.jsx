@@ -35,13 +35,13 @@ const C = styled.div`
 
 export function Card({data}){
     const navigate = useNavigate();
-    console.log(data);
     return(
         <C image={data.profilePictureUrl}>
             <div>
                 <h2>{data.username}</h2>
                 <button onClick={()=>{
-                    localStorage.setItem('idNewContact', data._id)
+                    localStorage.setItem('idUser2', data._id)
+                    localStorage.setItem('idNewContact', true)
                     navigate(`/Chats`)
                 }}>Chatear</button>
             </div>
