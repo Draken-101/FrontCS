@@ -46,6 +46,7 @@ export function People() {
                     amigos: amigos
                 });
                 const fetchedContacts = await axios.post('http://localhost:3000/users/allContacts', body, { headers: headers });
+                console.log(fetchedContacts);
                 setcontacts(fetchedContacts.data);
             } catch (error) {
                 console.error('Error al obtener datos:', error);

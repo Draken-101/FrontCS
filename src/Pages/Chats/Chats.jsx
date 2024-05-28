@@ -6,6 +6,7 @@ import axios from "axios";
 import { SubirEstado } from "./components/organims/SubirEstado";
 import { Configuracion } from "./components/organims/Configuracion";
 import { Estados } from "./components/organims/Estados";
+import { Nothing } from "./components/organims/Nothing";
 
 const Container = styled.div`
     width: 100vw;
@@ -19,6 +20,7 @@ const Container = styled.div`
 export function Chats() {
     const [chatInUse, setChatInUse] = useState({});
     const [contacts, setContacts] = useState([]);
+    const [estados, setEstados] = useState([]);
     const [socket, setSocket] = useState(null);
     const [section2, setsection2] = useState('');
 
@@ -107,18 +109,20 @@ export function Chats() {
 
         fetchContacts();
         const ws = initializeWebSocket();
-        async function getContacts() {
+        async function getEstados() {
             const token = localStorage.getItem('token');
             const idUser1 = localStorage.getItem("idUser1");
+            const amigos = JSON.parse(localStorage.getItem('amigos'))
+            console.log(amigos);
             const headers = { 'Content-Type': 'application/json', 'token': token };
-            let objet = { idUser1: idUser1 };
+            let objet = { idUser1: idUser1, amigos: amigos };
             let body = JSON.stringify(objet);
-            const Contacts = await axios.post(`http://localhost:3000/users/contacts`, body, { headers });
-            setContacts(Contacts.data);
-            console.log(Contacts.data);
-            setTimeout(getContacts, 5000);
+            const Estados = await axios.post(`http://localhost:3000/estados/getEstados`, body, { headers });
+            setEstados(Estados);
+            console.log(Estados.data);
+            setTimeout(getEstados, 5000);
         }
-        getContacts();
+        getEstados();
         return () => {
             if (ws) {
                 ws.close();
@@ -168,7 +172,7 @@ export function Chats() {
                             section2 == 'Estados' ?
                             <Estados/>
                             :
-                            <span> Nada por aqui </span>
+                            <Nothing/>
             }
         </Container>
     );

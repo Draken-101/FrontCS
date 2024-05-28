@@ -17,16 +17,18 @@ export function Contact({ changeChat, data, idContact, contactOnChat, lastMessag
 
     useEffect(() => {
         const idUser1 = localStorage.getItem('idUser1');
-        const tieneVista = data.estados.some(e => e.viwers.includes(idUser1));
-        if (!tieneVista) {
-            setEstado(true);
+        if (data?.estados.length > 0) {
+            const tieneVista = data.estados?.some(e => e.viwers.includes(idUser1));
+            if (!tieneVista) {
+                setEstado(true);
+            }
         }
     }, [data?.estados]);
 
     const handleClick = (event) => {
         event.stopPropagation();
         setSection('Estados')
-        let identificadores = data.estados.map(e => {
+        let identificadores = data.estados?.map(e => {
             return e.idEstado;
         })
 
