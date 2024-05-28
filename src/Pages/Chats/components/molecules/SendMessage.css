@@ -8,7 +8,7 @@
     input {
         padding-left: 1vw;
         background-color: transparent;
-        width: calc(80% - 1vw);
+        width: calc(100% - 1vw);
         height: 5vh;
         font-size: 1.5vw;
         text-decoration: none;

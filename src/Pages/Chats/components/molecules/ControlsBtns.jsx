@@ -12,11 +12,12 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: center;
 `;
-export function ControlsBtns(){
+export function ControlsBtns({setSection}){
     const navigate = useNavigate();
     return(
         <Container>
-            <ConfigBtn><img src={icon} alt="" /></ConfigBtn>
+            <ConfigBtn onClick={() => setSection('Configuracion')}><img src={icon} alt="" /></ConfigBtn>
+            <AddContact onClick={() => setSection('SubirEstado')}>Subir Estado</AddContact>
             <AddContact onClick={()=> navigate('/People')}>Anadir mas gente</AddContact>
         </Container>
     )

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Multimedia } from '../molecules/Multimedia';
 const Container = styled.div`
     position: relative;
@@ -8,10 +8,23 @@ const Container = styled.div`
     display: flex;
     flex-wrap: wrap;
 `;
-export function Estados({ estados }) {
-    const [onChat, setOnChat] = useState('');
+export function Estados({}) {
+    const [estados, setEstados] = useState('');
+
+    useEffect(() => {
+        async function getEstados(){
+
+        }
+
+        getEstados()
+        return () => {
+            
+        };
+    }, []);
+
     return (
         <Container>
+
             <Multimedia/>
 
         </Container>

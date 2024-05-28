@@ -1,0 +1,38 @@
+.SubirEstado {
+    width: calc(100% - 6vw);
+    height: calc(100% - 6vw);
+    background-color: #70a3d0;
+    margin: 2vw;
+    padding: 1vw;
+    border-radius: 1vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    texTarea{
+        font-size: 3vw;
+        background-color: rgba(255, 255, 255, 0);
+        outline: none;
+        border: 0;
+        max-height: 80%;
+        width: 70%;
+        text-align: center;
+        resize: none;
+        overflow-y: hidden;
+    }
+
+    button {
+        font-size: 1.5vw;
+        width: 50%;
+        height: 5vh;
+        border: 0;
+        background-color: #024581;
+        border-radius: .2vw;
+
+        &:hover {
+            cursor: pointer;
+            background-color: #00549e;
+        }
+    }
+}

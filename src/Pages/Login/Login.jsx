@@ -11,6 +11,8 @@ export function Login() {
     const navigate = useNavigate();
 
     const handleLogin = async (event) => {
+        localStorage.setItem('idNewContact', false);
+        localStorage.setItem("idUser2", null);
         event.preventDefault();
 
         setError('');

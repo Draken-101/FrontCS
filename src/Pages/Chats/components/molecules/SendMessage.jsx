@@ -1,7 +1,7 @@
 import './SendMessage.css'
 import styled from 'styled-components';
 import icon from '../../../../assets/images/enviar.png'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 const Btn = styled.button`
     background-image: url(${icon});
     background-color: transparent;
@@ -20,10 +20,23 @@ const Btn = styled.button`
 `;
 export function SendMessage({ sendMessage }) {
     const [mensaje, setmensaje] = useState();
+    const [value, setValue] = useState('');
+
+    const handleChange = (value) => {
+        setValue(value);
+    };
     return (
         <div className='SendMessage'>
-            <input type="text" placeholder=' Escribe un mensaje' onChange={(e) => setmensaje(e.target.value)} />
-            <Btn onClick={() => sendMessage(mensaje)} />
+            <input type="text" placeholder=' Escribe un mensaje' 
+            value={value}
+            onChange={(e) => {
+                setmensaje(e.target.value);
+                handleChange(e.target.value)
+                } } />
+            <Btn onClick={() => {
+                sendMessage(mensaje)
+                setValue('')
+                }} />
         </div>
     )
 }

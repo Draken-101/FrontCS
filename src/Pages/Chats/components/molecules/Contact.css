@@ -35,6 +35,7 @@
 }
 
 .checkmark {
+    text-align: center;
     font-size: 1vw !important;
     justify-content: center;
     display: flex;

@@ -13,6 +13,6 @@ export const Message = styled.span`
         align-self: self-end;
         font-size: .7vw !important;
         font-weight: 300;
-        color: #a3a3a3;
+        color: #31d4d1;
     }
 `;
