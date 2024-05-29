@@ -1,0 +1,82 @@
+.Configuracion {
+    width: calc(100% - 4vw);
+    height: fit-content;
+    max-height: calc(100vh - 4vw);
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    gap: 1vw;
+    padding: 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h2 {
+        margin-top: 1vw;
+    }
+
+    h1 {
+        display: flex;
+        gap: 1vw;
+        align-items: center;
+        font-size: 3vw;
+        margin-bottom: 2vw;
+
+        button {
+            display: flex;
+            border-radius: .5vw;
+            border: 0;
+            height: fit-content;
+            padding: .5vw;
+            background-position: center;
+            background-color: #00325f;
+
+            img {
+                width: 2.5vw;
+                height: 2.5vw;
+                object-fit: cover;
+                filter: contrast(0%) brightness(100);
+            }
+
+            &:hover {
+                cursor: pointer;
+                background-color: #00549e;
+            }
+        }
+    }
+
+}
+
+.Save{
+    font-size: 1.5vw;
+    background-color: #00325f;
+    padding-inline: 5vw;
+    padding-block: 1.2vw;
+    border-radius: .2vw;
+    border: 0;
+
+    &:hover {
+        cursor: pointer;
+        background-color: #00549e;
+    }
+}
+
+.NameInput {
+
+    width: fit-content;
+    max-width: 80%;
+    padding: 0vw 1vw;
+    border: 0;
+    text-align: center;
+    background-color: #00335f00;
+    border-bottom: .15vw solid white;
+    outline: none;
+    font-size: 3vw;
+    color: white;
+
+    &::placeholder {
+        color: white;
+        font-size: 3vw;
+    }
+}

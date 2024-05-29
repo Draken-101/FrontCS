@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from 'styled-components';
 import axios from "axios";
 import { Card } from "./components/molecules/Card";
@@ -30,30 +30,50 @@ const Container = styled.div`
 `;
 
 export function People() {
-    const [contacts, setcontacts] = useState([]);
+    const [contacts, setContacts] = useState([]);
     const navigate = useNavigate();
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                let headers = {
-                    'Content-Type': 'application/json',
-                    'token': localStorage.getItem('token')
-                }
+    const fetchData = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const amigos = JSON.parse(localStorage.getItem('amigos'));
+            const idUser1 = localStorage.getItem('idUser1');
 
-                const amigos = JSON.parse(localStorage.getItem('amigos'));
-                const body = JSON.stringify({
-                    idUser1: localStorage.getItem('idUser1'),
-                    amigos: amigos
-                });
-                const fetchedContacts = await axios.post('http://localhost:3000/users/allContacts', body, { headers: headers });
-                console.log(fetchedContacts);
-                setcontacts(fetchedContacts.data);
-            } catch (error) {
-                console.error('Error al obtener datos:', error);
+            if (!token || !amigos || !idUser1) {
+                throw new Error('Datos locales faltantes o inválidos');
             }
-        };
-        fetchData();
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'token': token
+            };
+
+            const body = {
+                idUser1: idUser1,
+                amigos: amigos
+            };
+
+            const response = await axios.post('http://localhost:3000/users/allContacts', body, { headers });
+
+            console.log('Response data:', response.data);
+
+            setContacts(response.data);
+        } catch (error) {
+            if (error.response) {
+                console.error('Error en la respuesta del servidor:', error.response.data);
+            } else if (error.request) {
+                console.error('No se recibió respuesta del servidor:', error.request);
+            } else {
+                console.error('Error al configurar la solicitud:', error.message);
+            }
+        }
     }, []);
+
+    useEffect(() => {
+        fetchData();
+        const intervalId = setInterval(fetchData, 5000);
+
+        return () => clearInterval(intervalId);
+    }, [fetchData]);
     return (
         <Container>
             <Contacts contacts={contacts} />

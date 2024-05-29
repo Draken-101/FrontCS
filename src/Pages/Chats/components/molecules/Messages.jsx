@@ -15,7 +15,7 @@ export function Messages({ mensajes }) {
                 mensajes?.map(mensaje => {
                     if (mensaje?.idUser === localStorage.getItem('idUser1')) {
                         return (
-                            <Message className='message-right'>
+                            <Message key={mensaje?._id} className='message-right'>
                                 {mensaje?.mensaje}
                                 <span>
                                     {mensaje?.date}
@@ -24,7 +24,7 @@ export function Messages({ mensajes }) {
                         )
                     } else {
                         return (
-                            <Message className='message-left'>
+                            <Message key={mensaje?._id} className='message-left'>
                                 {mensaje?.mensaje}
                                 <span>
                                     {mensaje?.date}

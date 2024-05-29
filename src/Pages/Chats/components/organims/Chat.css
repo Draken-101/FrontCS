@@ -2,5 +2,25 @@
     width:60vw ;
     height: 100vh;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+}
+.Estados{
+    display: flex;
+    align-items: center;
+    width: calc(60vw - 2vw);
+    max-width: calc(60vw - 2vw);
+    height: calc(10vh - 2vw);
+    padding: 1vw;
+    background-color: rgb(20, 45, 96);
+    border-left: .15vw solid white;
+    flex-direction: row;
+    overflow-x: scroll;
+    
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    span{
+        border-radius: .5vw;
+        background-color: rgb(39, 78, 111);
+        padding: 1vw 3vw;
+    }
 }

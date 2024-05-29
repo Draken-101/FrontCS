@@ -16,28 +16,13 @@ export function Contact({ changeChat, data, idContact, contactOnChat, lastMessag
     const [estado, setEstado] = useState(false);
 
     useEffect(() => {
-        const idUser1 = localStorage.getItem('idUser1');
-        if (data?.estados.length > 0) {
-            const tieneVista = data.estados?.some(e => e.viwers.includes(idUser1));
-            if (!tieneVista) {
-                setEstado(true);
-            }
+        if (data.estados !== undefined) {
+                    setEstado(true)
         }
-    }, [data?.estados]);
-
-    const handleClick = (event) => {
-        event.stopPropagation();
-        setSection('Estados')
-        let identificadores = data.estados?.map(e => {
-            return e.idEstado;
-        })
-
-        identificadores = identificadores.filter(e => e !== null || e !== undefined);
-        console.log(identificadores);
-        setEstado(false);
-    };
+    }, [data.estados]);
 
     const handleContainerClick = () => {
+        setEstado(false);
         changeChat(idContact);
     };
     return (
@@ -49,7 +34,7 @@ export function Contact({ changeChat, data, idContact, contactOnChat, lastMessag
                 <span>{data.username}</span>
                 <span className='lastMessage'>{lastMessage?.mensaje}</span>
             </div>
-            <ImgProfile src={data.profilePictureUrl} estado={estado ? '.15vw solid #14c500' : '.15vw  solid #001440'} onClick={handleClick} />
+            <ImgProfile src={data.profilePictureUrl} estado={estado ? '.15vw solid #14c500' : '.15vw  solid #001440'} />
             <div>
                 <span className='lastTime'>{lastMessage?.date}</span>
                 <span className='checkmark'>{lastMessage ? "✓✓" : 'Sin Mensajes'}</span>

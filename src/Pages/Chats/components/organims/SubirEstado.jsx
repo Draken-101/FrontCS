@@ -34,26 +34,30 @@ export function SubirEstado({ setSection }) {
         };
     }, [text]);
 
+    const submit = async (event) => {
+        event.preventDefault();
+        const token = localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json', 'token': token };
+        const idUser1 = localStorage.getItem('idUser1');
+        const amigos = JSON.parse(localStorage.getItem('amigos'));
+        let objet = {
+            idUser1: idUser1,
+            amigos: amigos,
+            mensaje: text
+        };
+        let body = JSON.stringify(objet);
+        const Estado = await axios.post(`http://localhost:3000/estados/postEstados`, body, { headers });
+        
+        console.log(Estado.data.message, Estado.data.estado);
+        setSection('Chat')
+    }
+
     const handleChange = (event) => {
         setText(event.target.value);
     };
     return (
         <Container>
-            <form className='SubirEstado' onSubmit={async (event) => {
-                    event.preventDefault();
-                    const token = localStorage.getItem('token');
-                    const headers = { 'Content-Type': 'application/json', 'token': token };
-                    const idUser1 = localStorage.getItem('idUser1');
-                    let objet = {
-                        idUser1: idUser1,
-                        mensaje: text
-                    };
-                    let body = JSON.stringify(objet);
-                    const Estado = await axios.post(`http://localhost:3000/estados`, body, { headers });
-                    
-                    console.log(Estado.data.message, Estado.data.estado);
-                    setSection('Chat')
-                }}>
+            <form className='SubirEstado' onSubmit={submit}>
                 <h1>Subir Estado</h1>
                 <textarea ref={textareaRef} name="" id="" value={text} onChange={handleChange} placeholder='Diles hola a tus amigos'> </textarea>
                 <button type='submit'>Subir</button>

@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Chat } from "./components/organims/Chat";
 import { Contacts } from "./components/organims/Contacts";
 import styled from 'styled-components';
 import axios from "axios";
 import { SubirEstado } from "./components/organims/SubirEstado";
 import { Configuracion } from "./components/organims/Configuracion";
-import { Estados } from "./components/organims/Estados";
 import { Nothing } from "./components/organims/Nothing";
 
 const Container = styled.div`
@@ -22,37 +21,9 @@ export function Chats() {
     const [contacts, setContacts] = useState([]);
     const [estados, setEstados] = useState([]);
     const [socket, setSocket] = useState(null);
-    const [section2, setsection2] = useState('');
+    const [section2, setSection2] = useState('');
 
     useEffect(() => {
-        async function fetchContacts() {
-            const idUser1 = localStorage.getItem("idUser1");
-            const idUser2 = localStorage.getItem("idUser2");
-            const idNewContact = JSON.parse(localStorage.getItem('idNewContact'));
-            const token = localStorage.getItem('token');
-
-
-
-            const headers = { 'Content-Type': 'application/json', 'token': token };
-            try {
-                let objet = { idUser1: idUser1 };
-                let body = JSON.stringify(objet);
-                const Contacts = await axios.post(`http://localhost:3000/users/contacts`, body, { headers });
-                setContacts(Contacts.data);
-                if (idNewContact) {
-                    objet = { idUser1: idUser1, idContact: localStorage.getItem('idUser2') };
-                    body = JSON.stringify(objet);
-                    const contact = await axios.post(`http://localhost:3000/users/getContact`, body, { headers });
-                    setContacts([...Contacts.data, contact.data]);
-                    getChat(idUser2);
-                    localStorage.setItem('idNewContact', false);
-                }
-            } catch (error) {
-                console.error("Error fetching contacts:", error);
-            }
-        }
-
-
         function initializeWebSocket() {
             const ws = new WebSocket('ws://localhost:3000');
 
@@ -61,38 +32,19 @@ export function Chats() {
                 setSocket(ws);
             };
 
-            ws.onclose = () => {
-                console.log('Conexión WebSocket cerrada');
-                setSocket(null);
-            };
-
             ws.onmessage = async (event) => {
-                const dataJson = await JSON.parse(event.data);
+                const dataJson = JSON.parse(event.data);
                 console.log('Mensaje recibido desde el servidor:', dataJson);
 
                 switch (dataJson.event) {
                     case 'newMessage':
-                        const idUser2 = localStorage.getItem("idUser2");
-                        const updateContacts = contacts.map(contact => {
-                            console.log(contact);
-                            console.log(contact._id === idUser2);
-                            if (contact._id === idUser2) {
-                                contact.lastMessage = dataJson.newMessage;
-                            }
-                            return contact;
-                        })
-                        setContacts(updateContacts);
-                        setChatInUse((prevChat) => ({
-                            ...prevChat,
-                            mensajes: [...prevChat.mensajes, dataJson.newMessage]
-                        }));
+                        handleNewMessage(dataJson.newMessage);
                         break;
                     case 'Messages':
-                        console.log("Messages: ", dataJson.chat);
-                        setChatInUse(dataJson.chat);
+                        setChatInUse(dataJson.chat || {});
                         break;
                     case "newChat":
-                        console.log("newChat: ", dataJson.newChat);
+                        fetchContacts();
                         setChatInUse(dataJson.newChat);
                         break;
                     default:
@@ -107,22 +59,48 @@ export function Chats() {
             return ws;
         }
 
-        fetchContacts();
-        const ws = initializeWebSocket();
-        async function getEstados() {
-            const token = localStorage.getItem('token');
+        const handleNewMessage = (newMessage) => {
+            const idUser2 = localStorage.getItem("idUser2");
+            const updatedContacts = contacts.map(contact => {
+                if (contact._id === idUser2) {
+                    contact.lastMessage = newMessage;
+                }
+                return contact;
+            });
+            setContacts(updatedContacts);
+            setChatInUse(prevChat => ({
+                ...prevChat,
+                mensajes: [...prevChat.mensajes, newMessage]
+            }));
+        };
+
+        async function fetchContacts() {
             const idUser1 = localStorage.getItem("idUser1");
-            const amigos = JSON.parse(localStorage.getItem('amigos'))
-            console.log(amigos);
+            const idUser2 = localStorage.getItem("idUser2");
+            const idNewContact = JSON.parse(localStorage.getItem('idNewContact'));
+            const token = localStorage.getItem('token');
+
             const headers = { 'Content-Type': 'application/json', 'token': token };
-            let objet = { idUser1: idUser1, amigos: amigos };
-            let body = JSON.stringify(objet);
-            const Estados = await axios.post(`http://localhost:3000/estados/getEstados`, body, { headers });
-            setEstados(Estados);
-            console.log(Estados.data);
-            setTimeout(getEstados, 5000);
+            try {
+                const body = JSON.stringify({ idUser1 });
+                const response = await axios.post(`http://localhost:3000/users/contacts`, body, { headers });
+                if (idNewContact) {
+                    setSection2('Chat');
+                    const contactBody = JSON.stringify({ idUser1, idContact: idUser2 });
+                    const contactResponse = await axios.post(`http://localhost:3000/users/getContact`, contactBody, { headers });
+                    setContacts([...contacts, contactResponse.data]);
+                    localStorage.setItem('idNewContact', false);
+                } else {
+                    setContacts(response.data);
+                }
+            } catch (error) {
+                console.error("Error fetching contacts:", error);
+            }
         }
-        getEstados();
+
+        const ws = initializeWebSocket();
+        fetchContacts();
+
         return () => {
             if (ws) {
                 ws.close();
@@ -130,7 +108,66 @@ export function Chats() {
         };
     }, []);
 
+    const getProfiles = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const idUser1 = localStorage.getItem("idUser1");
+            const headers = { 'Content-Type': 'application/json', 'token': token };
+            const body = JSON.stringify({ idUser1 });
+            const response = await axios.post(`http://localhost:3000/users/getProfiles`, body, { headers });
+            console.log(response.data);
+            const profileData = response.data;
+            setContacts(prevContacts => prevContacts.map(contact => {
+                if (contact._id === profileData.idAmigo) {
+                    return { ...contact, profilePictureUrl: profileData.url };
+                }
+                return contact;
+            }));
+        } catch (error) {
+            console.error("Error fetching profiles:", error);
+        }
+        getProfiles();
+    };
+
+
+    const getEstados = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const idUser1 = localStorage.getItem("idUser1");
+            const headers = { 'Content-Type': 'application/json', 'token': token };
+            const body = JSON.stringify({ idUser1 });
+            const response = await axios.post(`http://localhost:3000/estados/getEstados`, body, { headers });
+            console.log(response.data);
+            const estadoData = response.data;
+            setContacts(prevContacts => prevContacts.map(contact => {
+                let newEstados = [];
+                if (contact.estados !== undefined) {
+                    newEstados = contact.estados;
+                }
+                newEstados.push(estadoData)
+                return { ...contact, estados: newEstados };
+            }));
+        } catch (error) {
+            console.error("Error fetching profiles:", error);
+        }
+        getEstados();
+    };
+
+    useEffect(() => {
+        getEstados();
+    }, []);
+
+    useEffect(() => {
+        getProfiles();
+    }, []);
+
     const sendMessage = (mensaje) => {
+        const amigos = JSON.parse(localStorage.getItem('amigos'));
+        if (!amigos.includes(localStorage.getItem('idUser2'))) {
+            amigos.push(localStorage.getItem('idUser2'));
+            localStorage.setItem("amigos", JSON.stringify(amigos));
+        }
+
         if (socket) {
             const objet = {
                 event: "sendMessage",
@@ -158,21 +195,31 @@ export function Chats() {
 
     return (
         <Container>
-            <Contacts contacts={contacts} getChat={getChat} lastMessage={''} setSection={(section) => setsection2(section)} />
+            <Contacts
+                setEstados={() => {
+                    const idUser2 = localStorage.getItem("idUser2");
+                    const getEstados = contacts.filter(contact => {
+                        if (contact._id === idUser2) {
+                            return contact.estados;
+                        }
+                    })
+                    console.log(getEstados);
+                }}
+                chatInUse={Object.keys(chatInUse).length === 0}
+                contacts={contacts}
+                getChat={getChat}
+                setSection={setSection2}
+            />
             {
-                section2 == 'Chat' ?
+                section2 === 'Chat' ? (
                     <Chat chatInUse={chatInUse} sendMessage={sendMessage} />
-                    :
-                    section2 == 'SubirEstado' ?
-                        <SubirEstado setSection={(section) => setsection2(section)} />
-                        :
-                        section2 == 'Configuracion' ?
-                            <Configuracion />
-                            :
-                            section2 == 'Estados' ?
-                            <Estados/>
-                            :
-                            <Nothing/>
+                ) : section2 === 'SubirEstado' ? (
+                    <SubirEstado setSection={setSection2} />
+                ) : section2 === 'Configuracion' ? (
+                    <Configuracion setSection={setSection2} />
+                ) : (
+                    <Nothing />
+                )
             }
         </Container>
     );

@@ -21,11 +21,14 @@ const Container = styled.div`
         max-height: 93vh;
     }
 `;
-export function Contacts({ contacts, getChat, setSection }) {
+export function Contacts({ contacts, getChat, setSection, chatInUse, setEstados }) {
     const [onChat, setOnChat] = useState('');
     const handleSetOnChat = (idContact) => {
-        if (localStorage.getItem('idUser2') !== idContact) {
+        const amigos = JSON.parse(localStorage.getItem('amigos'))
+        const idUser2 = localStorage.getItem('idUser2')
+        if (idUser2 !== idContact || chatInUse && amigos.includes(idUser2)) {
             localStorage.setItem("idUser2", idContact);
+            setEstados()
             getChat(idContact)
             setOnChat(idContact);
         }

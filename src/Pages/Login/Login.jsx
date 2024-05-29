@@ -23,7 +23,10 @@ export function Login() {
 
             if (response.status === 200) {
                 localStorage.setItem("idUser1", response.data.idUser1);
+                localStorage.setItem("username", response.data.username);
                 localStorage.setItem("amigos", JSON.stringify(response.data.amigos));
+                localStorage.setItem('profile', response.data.profilePictureUrl)
+                localStorage.setItem("idUser2", JSON.stringify(response.data.amigos[0]));
                 localStorage.setItem("token", response.data.token);
                 console.log('Autenticación exitosa. Token:', response.data.token);
             } else {
