@@ -134,11 +134,17 @@ export function Chats() {
         try {
             const token = localStorage.getItem('token');
             const idUser1 = localStorage.getItem("idUser1");
-            const headers = { 'Content-Type': 'application/json', 'token': token };
-            const body = JSON.stringify({ idUser1 });
-            const response = await axios.post(`http://localhost:3000/estados/getEstados`, body, { headers });
-            console.log(response.data);
-            const estadoData = response.data;
+            const headers = {
+                'Content-Type': 'application/json',
+                'token': token
+            };
+            const body = JSON.stringify({ idUser1: idUser1 });
+            try {
+                const response = await axios.post(`http://localhost:3000/estados/getEstados`, body, { headers });
+                console.log(response.data);
+            } catch (error) {
+                console.log(error);
+            }
             setContacts(prevContacts => prevContacts.map(contact => {
                 let newEstados = [];
                 if (contact.estados !== undefined) {

@@ -1,16 +1,13 @@
-import styled from 'styled-components';
 import './SubirEstado.css'
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-const Container = styled.div`
-    width: 100%;
-    height: 100%;
-    display: flex;
-`;
 export function SubirEstado({ setSection }) {
     const textareaRef = useRef(null);
     const [text, setText] = useState('');
 
+    const handleChange = (event) => {
+        setText(event.target.value);
+    };
     useEffect(() => {
         const updateTextareaHeight = () => {
             if (textareaRef.current) {
@@ -34,10 +31,12 @@ export function SubirEstado({ setSection }) {
         };
     }, [text]);
 
-    const submit = async (event) => {
-        event.preventDefault();
+    const submit = async () => {
         const token = localStorage.getItem('token');
-        const headers = { 'Content-Type': 'application/json', 'token': token };
+        const headers = {
+            'Content-Type': 'application/json',
+            'token': token
+        };
         const idUser1 = localStorage.getItem('idUser1');
         const amigos = JSON.parse(localStorage.getItem('amigos'));
         let objet = {
@@ -46,22 +45,21 @@ export function SubirEstado({ setSection }) {
             mensaje: text
         };
         let body = JSON.stringify(objet);
-        const Estado = await axios.post(`http://localhost:3000/estados/postEstados`, body, { headers });
-        
-        console.log(Estado.data.message, Estado.data.estado);
+
+        try {
+            const Estado = await axios.post(`http://localhost:3000/estados/postEstados`, body, { headers });
+            console.log(Estado.data.message, Estado.data.estado);
+        } catch (error) {
+            console.log(error);
+        }
+
         setSection('Chat')
     }
-
-    const handleChange = (event) => {
-        setText(event.target.value);
-    };
     return (
-        <Container>
-            <form className='SubirEstado' onSubmit={submit}>
-                <h1>Subir Estado</h1>
-                <textarea ref={textareaRef} name="" id="" value={text} onChange={handleChange} placeholder='Diles hola a tus amigos'> </textarea>
-                <button type='submit'>Subir</button>
-            </form>
-        </Container>
+        <div className='SubirEstado'>
+            <h1>Subir Estado</h1>
+            <textarea ref={textareaRef} name="" id="" value={text} onChange={handleChange} placeholder='Diles hola a tus amigos'> </textarea>
+            <button type='button' onClick={submit}>Subir</button>
+        </div>
     )
 }
