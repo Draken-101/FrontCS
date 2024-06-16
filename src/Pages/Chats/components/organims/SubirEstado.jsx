@@ -1,13 +1,16 @@
-import './SubirEstado.css'
+import './SubirEstado.css';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+
 export function SubirEstado({ setSection }) {
     const textareaRef = useRef(null);
     const [text, setText] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (event) => {
         setText(event.target.value);
     };
+
     useEffect(() => {
         const updateTextareaHeight = () => {
             if (textareaRef.current) {
@@ -24,6 +27,7 @@ export function SubirEstado({ setSection }) {
         const handleResize = () => {
             updateTextareaHeight();
         };
+
         window.addEventListener('resize', handleResize);
 
         return () => {
@@ -32,34 +36,47 @@ export function SubirEstado({ setSection }) {
     }, [text]);
 
     const submit = async () => {
+        if (loading) return; 
+
         const token = localStorage.getItem('token');
+        const idUser1 = localStorage.getItem('idUser1');
+        const amigos = JSON.parse(localStorage.getItem('amigos'));
         const headers = {
             'Content-Type': 'application/json',
             'token': token
         };
-        const idUser1 = localStorage.getItem('idUser1');
-        const amigos = JSON.parse(localStorage.getItem('amigos'));
-        let objet = {
+        const objet = {
             idUser1: idUser1,
+            multimedia: undefined,
             amigos: amigos,
             mensaje: text
         };
-        let body = JSON.stringify(objet);
+        const body = JSON.stringify(objet);
 
         try {
-            const Estado = await axios.post(`http://localhost:3000/estados/postEstados`, body, { headers });
-            console.log(Estado.data.message, Estado.data.estado);
+            //                            http://localhost:3000/estados/postEstados
+            const res = await axios.post('http://localhost:3000/estados/postEstados', body, { headers });
+            console.log(res.data.message, res.data.estado);
+            setSection('Chat');
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
+    };
 
-        setSection('Chat')
-    }
     return (
         <div className='SubirEstado'>
             <h1>Subir Estado</h1>
-            <textarea ref={textareaRef} name="" id="" value={text} onChange={handleChange} placeholder='Diles hola a tus amigos'> </textarea>
-            <button type='button' onClick={submit}>Subir</button>
+            <textarea
+                ref={textareaRef}
+                value={text}
+                onChange={handleChange}
+                placeholder='Diles hola a tus amigos'
+            />
+            <button type='button' onClick={submit} disabled={loading}>
+                {loading ? 'Subiendo...' : 'Subir'}
+            </button>
         </div>
-    )
+    );
 }

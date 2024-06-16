@@ -23,7 +23,54 @@ export function Chats() {
     const [socket, setSocket] = useState(null);
     const [section2, setSection2] = useState('');
 
+
     useEffect(() => {
+
+        const handleNewMessage = (newMessage) => {
+            const idUser2 = localStorage.getItem("idUser2");
+            console.log(contacts);
+            const updatedContacts = contacts.map(contact => {
+                console.log(contact._id);
+                if (contact._id == idUser2) {
+                    return { ...contact, lastMessage: newMessage };
+                }
+                return contact;
+            });
+            console.log(updatedContacts);
+            setContacts(updatedContacts);
+            setChatInUse(prevChat => ({
+                ...prevChat,
+                mensajes: [...prevChat.mensajes, newMessage]
+            }));
+        };
+        async function fetchContacts() {
+            const idUser1 = localStorage.getItem("idUser1");
+            const idUser2 = localStorage.getItem("idUser2");
+            const idNewContact = JSON.parse(localStorage.getItem('idNewContact'));
+            const token = localStorage.getItem('token');
+
+            const headers = { 'Content-Type': 'application/json', 'token': token };
+            try {
+                const body = JSON.stringify({ idUser1 });
+                if (idNewContact) {
+                    setSection2('Chat');
+                    const contactBody = JSON.stringify({ idUser1, idContact: idUser2 });
+                    await axios.post(`http://localhost:3000/users/getContact`, contactBody, { headers })
+                        .then(res => {
+                            setContacts([...contacts, res.data]);
+                        });
+                    localStorage.setItem('idNewContact', false);
+                } else {
+                    await axios.post(`http://localhost:3000/users/contacts`, body, { headers })
+                        .then(res => {
+                            setContacts(res.data);
+                        });
+                }
+            } catch (error) {
+                console.error("Error fetching contacts:", error);
+            }
+        }
+
         function initializeWebSocket() {
             const ws = new WebSocket('ws://localhost:3000');
 
@@ -59,47 +106,9 @@ export function Chats() {
             return ws;
         }
 
-        const handleNewMessage = (newMessage) => {
-            const idUser2 = localStorage.getItem("idUser2");
-            const updatedContacts = contacts.map(contact => {
-                if (contact._id === idUser2) {
-                    contact.lastMessage = newMessage;
-                }
-                return contact;
-            });
-            setContacts(updatedContacts);
-            setChatInUse(prevChat => ({
-                ...prevChat,
-                mensajes: [...prevChat.mensajes, newMessage]
-            }));
-        };
-
-        async function fetchContacts() {
-            const idUser1 = localStorage.getItem("idUser1");
-            const idUser2 = localStorage.getItem("idUser2");
-            const idNewContact = JSON.parse(localStorage.getItem('idNewContact'));
-            const token = localStorage.getItem('token');
-
-            const headers = { 'Content-Type': 'application/json', 'token': token };
-            try {
-                const body = JSON.stringify({ idUser1 });
-                const response = await axios.post(`http://localhost:3000/users/contacts`, body, { headers });
-                if (idNewContact) {
-                    setSection2('Chat');
-                    const contactBody = JSON.stringify({ idUser1, idContact: idUser2 });
-                    const contactResponse = await axios.post(`http://localhost:3000/users/getContact`, contactBody, { headers });
-                    setContacts([...contacts, contactResponse.data]);
-                    localStorage.setItem('idNewContact', false);
-                } else {
-                    setContacts(response.data);
-                }
-            } catch (error) {
-                console.error("Error fetching contacts:", error);
-            }
-        }
+        fetchContacts();
 
         const ws = initializeWebSocket();
-        fetchContacts();
 
         return () => {
             if (ws) {
