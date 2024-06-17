@@ -29,6 +29,7 @@ export function Login() {
                 localStorage.setItem("idUser2", JSON.stringify(response.data.amigos[0]));
                 localStorage.setItem("token", response.data.token);
                 console.log('Autenticación exitosa. Token:', response.data.token);
+                navigate('/Chats')
             } else {
                 setError('Error en la autenticación: ' + response.data.message);
             }
@@ -37,7 +38,6 @@ export function Login() {
         } finally {
             setLoading(false);
         }
-        navigate('/Chats')
     };
 
     return (
@@ -65,7 +65,7 @@ export function Login() {
                 <div>
                     <span>
                         Si no tienes cuenta
-                        <Link to="/Register" style={{ marginLeft: '.5vw', color:"blue" }}>
+                        <Link to="/Register" style={{ marginLeft: '.5vw', color: "blue" }}>
                             <span>
                                 Registrate
                             </span>
