@@ -37,7 +37,7 @@ export function Contacts({ contacts, getChat, setSection, chatInUse, setEstados 
         <Container>
             <div className='ContaineContacts'>
                 {
-                    contacts?.map(contact => <Contact setSection={setSection} lastMessage={contact.lastMessage} changeChat={handleSetOnChat} data={contact} key={contact._id} idContact={contact._id} contactOnChat={onChat} />)
+                    contacts?.map(contact => <Contact setSection={setSection} lastMessage={contact?.lastMessage} changeChat={handleSetOnChat} data={contact} key={contact._id} idContact={contact._id} contactOnChat={onChat} />)
                 }
             </div>
             <ControlsBtns setSection={setSection} />

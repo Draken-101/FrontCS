@@ -3,7 +3,7 @@ import axios from "axios";
 import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
 
-export function Login() {
+export function Login({ setUser1, setIsAuthenticated }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -19,18 +19,22 @@ export function Login() {
         setLoading(true);
 
         try {
-            const response = await axios.post('http://localhost:3000/auth/singin', { username, password });
+            const response = await axios.post('http://localhost:3000/users/singin', { username, password });
 
             if (response.status === 200) {
-                localStorage.setItem("idUser1", response.data.idUser1);
-                localStorage.setItem("username", response.data.username);
-                localStorage.setItem("amigos", JSON.stringify(response.data.amigos));
-                localStorage.setItem('profile', response.data.profilePictureUrl)
+                setUser1({
+                    idUser1: response.data.idUser1,
+                    username: response.data.username,
+                    amigos: response.data.amigos,
+                    profile: response.data.profilePictureUrl,
+                })
                 localStorage.setItem("idUser2", JSON.stringify(response.data.amigos[0]));
                 localStorage.setItem("token", response.data.token);
                 console.log('Autenticación exitosa. Token:', response.data.token);
-                navigate('/Chats')
+                setIsAuthenticated(true)
+                navigate('/Chats');
             } else {
+                setIsAuthenticated(false)
                 setError('Error en la autenticación: ' + response.data.message);
             }
         } catch (error) {

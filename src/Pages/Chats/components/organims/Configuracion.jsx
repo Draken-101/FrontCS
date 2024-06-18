@@ -32,7 +32,7 @@ export function Configuracion({ setSection }) {
         const headers = { 'Content-Type': 'application/json', 'token': token };
         let objet = { idUser1: idUser1, amigos: amigos, url: profile, username: username };
         let body = JSON.stringify(objet);
-        const updateUser = await axios.put("http://localhost:3000/users/postProfile", body, { headers });
+        const updateUser = await axios.put("http://localhost:3000/users/updateProfile", body, { headers });
         console.log(updateUser);
         setSection('')
     }

@@ -11,11 +11,11 @@ const Container = styled.div`
     scrollbar-width: none;
     -ms-overflow-style: none;
 `;
-export function Contacts({contacts}) {
+export function Contacts({contacts, setUser2}) {
     return (
         <Container>
             {
-                contacts.map(contact => <Card data={contact} />)
+                contacts.map(contact => <Card setUser2={setUser2} key={contact._id} data={contact} />)
             }
         </Container>
     )

@@ -6,7 +6,7 @@ export const ProfileUsable = styled.img`
     object-fit: cover;
     transition: border 0s !important;
     border-radius: .5vw;
-    border: ${props => props.Selected ? ".15vw" : "0"} solid #00ffff;
+    border: ${props => props.selectedProfile ? ".15vw" : "0"} solid #00ffff;
     padding: .5vw;
     &:hover{
         cursor: pointer;

@@ -29,5 +29,5 @@ export const ProtectedRoute = ({ element }) => {
     validateToken();
   }, []);
   
-  return element;
+  return isAuthenticated ? element : "";
 };

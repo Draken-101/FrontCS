@@ -15,13 +15,10 @@ export function ProfilesUsables({ setProfileUser }) {
     const [selected, setSelected] = useState('');
     useEffect(() => {
         const getProfiles = async () => {
-            const idUser1 = localStorage.getItem("idUser1");
-            const token = localStorage.getItem('token');
             setSelected(localStorage.getItem('profile'));
-            const headers = { 'Content-Type': 'application/json', 'token': token };
-            let objet = { idUser1: idUser1 };
-            let body = JSON.stringify(objet);
-            const Profiles = await axios.post(`http://localhost:3000/profile/getProfiles`, body, { headers });
+            const headers = { 'Content-Type': 'application/json'};
+            const Profiles = await axios.get(`http://localhost:3000/profile`, { headers });
+            console.log(Profiles.data);
             setProfiles(Profiles.data)
         }
 
@@ -36,7 +33,7 @@ export function ProfilesUsables({ setProfileUser }) {
     return (
         <Container>
             {
-                profiles?.map(p => <ProfileUsable onClick={() => changeProfile(p.url)} Selected={p.url === selected} src={p.url}/>)
+                profiles?.map(p => <ProfileUsable key={p._id} onClick={() => changeProfile(p.url)} selectedProfile={p.url === selected} src={p.url}/>)
             }
         </Container>
     )

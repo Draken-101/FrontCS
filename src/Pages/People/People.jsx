@@ -29,54 +29,11 @@ const Container = styled.div`
     }
 `;
 
-export function People() {
-    const [contacts, setContacts] = useState([]);
+export function People({ contacts, setUser2 }) {
     const navigate = useNavigate();
-    const fetchData = useCallback(async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const amigos = JSON.parse(localStorage.getItem('amigos'));
-            const idUser1 = localStorage.getItem('idUser1');
-
-            if (!token || !amigos || !idUser1) {
-                throw new Error('Datos locales faltantes o inválidos');
-            }
-
-            const headers = {
-                'Content-Type': 'application/json',
-                'token': token
-            };
-
-            const body = {
-                idUser1: idUser1,
-                amigos: amigos
-            };
-
-            const response = await axios.post('http://localhost:3000/users/allContacts', body, { headers });
-
-            console.log('Response data:', response.data);
-
-            setContacts(response.data);
-        } catch (error) {
-            if (error.response) {
-                console.error('Error en la respuesta del servidor:', error.response.data);
-            } else if (error.request) {
-                console.error('No se recibió respuesta del servidor:', error.request);
-            } else {
-                console.error('Error al configurar la solicitud:', error.message);
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        fetchData();
-        const intervalId = setInterval(fetchData, 5000);
-
-        return () => clearInterval(intervalId);
-    }, [fetchData]);
     return (
         <Container>
-            <Contacts contacts={contacts} />
+            <Contacts contacts={contacts} setUser2={setUser2} />
             <button className="Volver" onClick={() => navigate('/Chats')}>Volver</button>
         </Container>
     )

@@ -23,7 +23,7 @@ export function Register() {
 
         try {
         
-            const response = await axios.post('http://localhost:3000/auth/singup', { username, password });
+            const response = await axios.post('http://localhost:3000/users/singup', { username, password });
 
             if (response.status === 200) {
                 console.log('Usuario registrado:', response.data.user);

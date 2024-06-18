@@ -33,15 +33,19 @@ const C = styled.div`
     }
 `;
 
-export function Card({data}){
+export function Card({ data, setUser2 }) {
     const navigate = useNavigate();
-    return(
+    return (
         <C image={data.profilePictureUrl}>
             <div>
                 <h2>{data.username}</h2>
-                <button onClick={()=>{
-                    localStorage.setItem('idUser2', data._id)
-                    localStorage.setItem('idNewContact', true)
+                <button onClick={() => {
+                    setUser2({
+                        idUser2: data._id,
+                        idNewContact: true
+                    },
+                        data
+                    );
                     navigate(`/Chats`)
                 }}>Chatear</button>
             </div>
