@@ -3,7 +3,7 @@ import axios from "axios";
 import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
 
-export function Login({ setUser1, setIsAuthenticated }) {
+export function Login({ setUser1, setIsAuthenticated, setUser2 }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -11,9 +11,11 @@ export function Login({ setUser1, setIsAuthenticated }) {
     const navigate = useNavigate();
 
     const handleLogin = async (event) => {
-        localStorage.setItem('idNewContact', false);
-        localStorage.setItem("idUser2", null);
         event.preventDefault();
+        setUser2({
+            idUser2: null,
+            idNewContact: false
+        });
 
         setError('');
         setLoading(true);
@@ -23,13 +25,16 @@ export function Login({ setUser1, setIsAuthenticated }) {
             console.log(response);
             if (response.status === 200) {
                 setUser1({
+                    setUser1: response.data.idUser1,
                     username: response.data.username,
                     amigos: response.data.amigos,
                     profile: response.data.profilePictureUrl,
-                })
-                localStorage.setItem("idUser1", response.data.idUser1);
-                localStorage.setItem("idUser2", response.data.amigos[0]);
-                localStorage.setItem("token", response.data.token);
+                    token: response.data.token
+                });
+                setUser2({
+                    idUser2: response.data.amigos[0],
+                    idNewContact: false
+                });
                 console.log('Autenticación exitosa. Token:', response.data.token);
                 setIsAuthenticated(true)
                 navigate('/Chats');

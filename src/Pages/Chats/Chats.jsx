@@ -6,6 +6,7 @@ import axios from "axios";
 import { SubirEstado } from "./components/organims/SubirEstado";
 import { Configuracion } from "./components/organims/Configuracion";
 import { Nothing } from "./components/organims/Nothing";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
     width: 100vw;
@@ -16,8 +17,14 @@ const Container = styled.div`
     grid-template-columns: 40vw 60vw;
 `;
 
-export function Chats({ contacts, chat, socket, idUser2, amigos, setAmigos }) {
+export function Chats({ contacts, chat, socket, idUser2, amigos, setAmigos, isAuthenticated }) {
     const [section2, setSection2] = useState('');
+    const navigate = useNavigate();
+
+    if (isAuthenticated) {
+        console.log("No validado");
+        navigate('/Login');
+    }
 
     const sendMessage = (mensaje) => {
         if (!amigos.includes(idUser2)) {

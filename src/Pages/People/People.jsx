@@ -1,7 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
 import styled from 'styled-components';
-import axios from "axios";
-import { Card } from "./components/molecules/Card";
 import { Contacts } from "./components/organims/Contacts";
 import { useNavigate } from "react-router-dom";
 const Container = styled.div`
@@ -29,8 +26,11 @@ const Container = styled.div`
     }
 `;
 
-export function People({ contacts, setUser2 }) {
+export function People({ contacts, setUser2, isAuthenticated }) {
     const navigate = useNavigate();
+    if (!isAuthenticated) {
+        navigate("/Login")
+    }
     return (
         <Container>
             <Contacts contacts={contacts} setUser2={setUser2} />
