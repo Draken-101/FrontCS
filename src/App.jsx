@@ -1,10 +1,11 @@
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Chats } from "./Pages/Chats/Chats";
 import { Login } from "./Pages/Login/Login";
 import { Register } from "./Pages/Register/Register";
 import { People } from "./Pages/People/People";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 function App() {
   const [allContacts, setAllContacts] = useState([]);
@@ -14,18 +15,23 @@ function App() {
   const [User2, setUser2] = useState({});
   const [User1, setUser1] = useState({});
   const [socket, setSocket] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   useEffect(() => {
-
     const getData = async () => {
       try {
         const token = localStorage.getItem('token');
+        const idUser1 = localStorage.getItem("idUser1");
         const headers = { 'Content-Type': 'application/json', 'token': token };
         console.log(User1);
-        const body = JSON.stringify({ idUser1: User1.idUser1 });
+        const body = JSON.stringify({ idUser1: idUser1 });
 
-        await axios.post('http://localhost:3000/validate', body, { headers });
+        try {
+          await axios.post('http://localhost:3000/validate', body, { headers });
+        } catch (error) {
+          setIsAuthenticated(false);
+          return;
+        }
 
         try {
           await axios.get(`http://localhost:3000/chat`, body, { headers })
@@ -69,69 +75,66 @@ function App() {
             return contact;
           }))
         });
-        setIsAuthenticated(true);
       } catch (error) {
-        setIsAuthenticated(false)
         throw (error);
       }
     };
+    if (isAuthenticated) {
+      getData();
+    }
 
-    getData();
-
-  }, []);
-
-  useEffect(() => {
-
-    const handleNewMessage = async (newMessage) => {
-      const updatedContacts = contacts.map(contact => {
-        if (contact._id == User2?.idUser2) {
-          return { ...contact, lastMessage: newMessage };
-        }
-        return contact;
-      });
-      setContacts(updatedContacts);
-      setChats(chats.map(chat => {
-        if (chat.participantes.find(User2?.idUser2)) {
-          chat.mensajes.push(newMessage);
-          return chat;
-        }
+  }, [isAuthenticated]);
+  const handleNewMessage = async (newMessage) => {
+    const updatedContacts = contacts.map(contact => {
+      if (contact._id == User2?.idUser2) {
+        return { ...contact, lastMessage: newMessage };
+      }
+      return contact;
+    });
+    setContacts(updatedContacts);
+    setChats(chats.map(chat => {
+      if (chat.participantes.find(User2?.idUser2)) {
+        chat.mensajes.push(newMessage);
         return chat;
-      }));
+      }
+      return chat;
+    }));
+  };
+
+  const initializeWebSocket = () => {
+    const ws = new WebSocket('ws://localhost:3000');
+
+    ws.onopen = () => {
+      console.log('Conexión WebSocket abierta');
+      setSocket(ws);
     };
 
-    const initializeWebSocket = async () => {
-      const ws = new WebSocket('ws://localhost:3000');
+    ws.onmessage = async (event) => {
+      const dataJson = JSON.parse(event.data);
+      console.log('Mensaje recibido desde el servidor:', dataJson);
 
-      ws.onopen = () => {
-        console.log('Conexión WebSocket abierta');
-        setSocket(ws);
-      };
-
-      ws.onmessage = async (event) => {
-        const dataJson = JSON.parse(event.data);
-        console.log('Mensaje recibido desde el servidor:', dataJson);
-
-        switch (dataJson.event) {
-          case 'newMessage':
-            handleNewMessage(dataJson.newMessage);
-            break;
-          case 'Messages':
-            setChats(prevChats => [...prevChats, dataJson.chat]);
-            break;
-          case "newChat":
-            setChats(prevChats => [...prevChats, dataJson.newChat]);
-            break;
-          default:
-            break;
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error('Error en la conexión WebSocket:', error);
-      };
-
-      return ws;
+      switch (dataJson.event) {
+        case 'newMessage':
+          handleNewMessage(dataJson.newMessage);
+          break;
+        case 'Messages':
+          setChats(prevChats => [...prevChats, dataJson.chat]);
+          break;
+        case "newChat":
+          setChats(prevChats => [...prevChats, dataJson.newChat]);
+          break;
+        default:
+          break;
+      }
     };
+
+    ws.onerror = (error) => {
+      console.error('Error en la conexión WebSocket:', error);
+    };
+
+    return ws;
+  };
+  useEffect(() => {
 
     if (isAuthenticated) {
       const ws = initializeWebSocket();
@@ -143,7 +146,7 @@ function App() {
       };
     }
 
-  }, []);
+  }, [isAuthenticated]);
 
   document.title = 'SocialUP';
   return (
@@ -159,7 +162,7 @@ function App() {
         } />
         <Route path="/Register" element={<Register />} />
         <Route path="/Chats" element={
-          isAuthenticated ?
+          <ProtectedRoute isAuthenticated={isAuthenticated} element={
             <Chats
               setAmigos={(newAmigo) => {
                 setUser1({ ...User1, amigos: [...User1.amigos, newAmigo] })
@@ -170,12 +173,11 @@ function App() {
               chat={chats.find(chat => chat.participantes.include(User2.idUser2))}
               socket={socket}
               contacts={contacts}
-            />
-            :
-            <Link to={'/Login'}/>
+            />}
+          />
         } />
         <Route path="/People" element={
-          isAuthenticated ?
+          <ProtectedRoute isAuthenticated={isAuthenticated} element={
             <People
               setUser2={(user, data) => {
                 if (!contacts.some(contact => contact._id === user.idUser2)) {
@@ -183,9 +185,7 @@ function App() {
                 }
                 setUser2(user);
               }}
-              contacts={allContacts} />
-            :
-            <Link to={'/Login'}/>
+              contacts={allContacts} />} />
         } />
       </Routes>
     </BrowserRouter>

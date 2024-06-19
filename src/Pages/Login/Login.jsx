@@ -20,15 +20,15 @@ export function Login({ setUser1, setIsAuthenticated }) {
 
         try {
             const response = await axios.post('http://localhost:3000/users/singin', { username, password });
-
+            console.log(response);
             if (response.status === 200) {
                 setUser1({
-                    idUser1: response.data.idUser1,
                     username: response.data.username,
                     amigos: response.data.amigos,
                     profile: response.data.profilePictureUrl,
                 })
-                localStorage.setItem("idUser2", JSON.stringify(response.data.amigos[0]));
+                localStorage.setItem("idUser1", response.data.idUser1);
+                localStorage.setItem("idUser2", response.data.amigos[0]);
                 localStorage.setItem("token", response.data.token);
                 console.log('Autenticación exitosa. Token:', response.data.token);
                 setIsAuthenticated(true)
