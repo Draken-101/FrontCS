@@ -40,3 +40,9 @@
     justify-content: center;
     display: flex;
 }
+.noReads{
+    padding: .5vw;
+    color: rgb(112, 226, 255) !important;
+    border-radius: 50%;
+    background-color: rgb(0, 42, 0);
+}

@@ -2,18 +2,20 @@ import { useState } from "react";
 import axios from "axios";
 import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useUserContext } from "../../context/userAuth";
 
-export function Login({ setUser1, setIsAuthenticated, setUser2 }) {
+export function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { setUser1, setUser2, setIsAuthenticated } = useUserContext();
 
     const handleLogin = async (event) => {
         event.preventDefault();
         setUser2({
-            idUser2: null,
+            idUser2: undefined,
             idNewContact: false
         });
 
@@ -25,7 +27,14 @@ export function Login({ setUser1, setIsAuthenticated, setUser2 }) {
             console.log(response);
             if (response.status === 200) {
                 setUser1({
-                    setUser1: response.data.idUser1,
+                    idUser1: response.data.idUser1,
+                    username: response.data.username,
+                    amigos: response.data.amigos,
+                    profile: response.data.profilePictureUrl,
+                    token: response.data.token
+                });
+                console.log({
+                    idUser1: response.data.idUser1,
                     username: response.data.username,
                     amigos: response.data.amigos,
                     profile: response.data.profilePictureUrl,

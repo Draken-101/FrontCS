@@ -3,7 +3,7 @@ import { initializeWebSocket } from "./WebSocket";
 import { ValidateUser } from "./Validation";
 import { getData } from "./Data";
 
-const userContext = createContext(undefined)
+const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [allContacts, setAllContacts] = useState([]);
@@ -13,19 +13,16 @@ export function UserProvider({ children }) {
   const [User1, setUser1] = useState({});
   const [User2, setUser2] = useState({});
   const [socket, setSocket] = useState(undefined);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(undefined);
 
   useEffect(() => {
-    setIsAuthenticated(ValidateUser());
-    getData(setChats, setContacts, contacts, setAllContacts, allContacts);
-
+    setIsAuthenticated(ValidateUser(User1));
   }, []);
 
-
   useEffect(() => {
-
     if (isAuthenticated) {
-      const ws = initializeWebSocket(setChats, chats, setContacts);
+      getData(setChats, setContacts, setAllContacts, User1);
+      const ws = initializeWebSocket(setChats, setContacts, User1);
       setSocket(ws);
       return () => {
         if (ws) {
@@ -33,11 +30,9 @@ export function UserProvider({ children }) {
         }
       };
     }
-
   }, [isAuthenticated]);
 
-
-  const value = useMemo(() => (
+  const value = useMemo(() => ({
     allContacts, setAllContacts,
     chats, setChats,
     contacts, setContacts,
@@ -46,7 +41,7 @@ export function UserProvider({ children }) {
     User2, setUser2,
     socket, setSocket,
     isAuthenticated, setIsAuthenticated
-  ), [
+  }), [
     allContacts,
     chats,
     contacts,
@@ -55,43 +50,18 @@ export function UserProvider({ children }) {
     User2,
     socket,
     isAuthenticated
-  ])
-
+  ]);
   return (
-    <userContext.Provider value={value}>
+    <UserContext.Provider value={value}>
       {children}
-    </userContext.Provider>
-  )
+    </UserContext.Provider>
+  );
 }
 
 export function useUserContext() {
-  try {
-    const context = useContext(userContext);
-    console.log(context);
-    if (!context) {
-      throw new Error('No hay datos')
-    }
-    const {
-      allContacts, setAllContacts,
-      chats, setChats,
-      contacts, setContacts,
-      estados, setEstados,
-      User1, setUser1,
-      User2, setUser2,
-      socket, setSocket,
-      isAuthenticated, setIsAuthenticated
-    } = context;
-    return {
-      allContacts, setAllContacts,
-      chats, setChats,
-      contacts, setContacts,
-      estados, setEstados,
-      User1, setUser1,
-      User2, setUser2,
-      socket, setSocket,
-      isAuthenticated, setIsAuthenticated
-    };
-  } catch (error) {
-    throw (error)
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('No hay datos');
   }
+  return context;
 }

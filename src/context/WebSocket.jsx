@@ -1,26 +1,61 @@
 
-const handleNewMessage = async (newMessage, chats, setChats, setContacts) => {
-    const updatedContacts = contacts.map(contact => {
-        if (contact._id == User2?.idUser2) {
-            return { ...contact, lastMessage: newMessage };
+const newMessageReciver = async (newMessage, setChats, setContacts, chatId, id) => {
+    setContacts(prevContacts => prevContacts.map(contact => {
+        if (contact._id == id) {
+            contact.lastMessage = newMessage;
+            contact.noReads += 1;
+            console.log(contact.noReads);
+            if (contact.noReads == 1) {
+                console.log(contact.noReads);
+                setChats(prevChats => prevChats.map(chat => {
+                    if (chat._id === chatId) {
+                        chat.mensajes.push({ noReads: true });
+                        console.log({ noReads: true });
+                    }
+                    return { ...chat }
+                }));
+            }
+            setChats(prevChats => prevChats.map(chat => {
+                if (chat._id === chatId) {
+                    chat.mensajes.push(newMessage);
+                    console.log(newMessage);
+                }
+                return { ...chat };
+            }));
         }
-        return contact;
-    });
-    setContacts(updatedContacts);
-    setChats(chats.map(chat => {
-        if (chat.participantes.find(User2?.idUser2)) {
-            chat.mensajes.push(newMessage);
-            return chat;
-        }
-        return chat;
+
+        return { ...contact };
     }));
 };
 
-export const initializeWebSocket = (setChats, chats, setContacts) => {
+
+const newMessageSender = async (newMessage, setChats, setContacts, chatId, id) => {
+    setContacts(prevContacts => prevContacts.map(contact => {
+        if (contact._id == id) {
+            contact.lastMessage = newMessage;
+        }
+        return { ...contact };
+    }));
+    setChats(prevChats => prevChats.map(chat => {
+        if (chat._id === chatId) {
+            chat.mensajes.push(newMessage);
+        }
+        return { ...chat };
+    }));
+};
+
+export const initializeWebSocket = (setChats, setContacts, User1) => {
+
+    if (!User1.token) {
+        return;
+    }
+
     const ws = new WebSocket('ws://localhost:3000');
+
 
     ws.onopen = () => {
         console.log('Conexión WebSocket abierta');
+        ws.send(JSON.stringify({ event: "", idUser1: User1.idUser1, token: User1?.token }));
     };
 
     ws.onmessage = async (event) => {
@@ -28,14 +63,23 @@ export const initializeWebSocket = (setChats, chats, setContacts) => {
         console.log('Mensaje recibido desde el servidor:', dataJson);
 
         switch (dataJson.event) {
-            case 'newMessage':
-                handleNewMessage(dataJson.newMessage, chats, setChats, setContacts);
+            case 'newMessageReciver':
+                console.log('newMessageReciver');
+                newMessageReciver(dataJson.newMessage, setChats, setContacts, dataJson.chatId, dataJson.id);
                 break;
-            case 'Messages':
-                setChats([...chats, dataJson.chat]);
+            case 'newMessageSender':
+                console.log('newMessageSender');
+                newMessageSender(dataJson.newMessage, setChats, setContacts, dataJson.chatId, dataJson.id);
                 break;
             case "newChat":
-                setChats([...chats, dataJson.chat]);
+                console.log("newChat");
+                setContacts(prevContacts => prevContacts.map(contact => {
+                    if (contact._id === dataJson.idUser2) {
+                        contact.lastMessage = dataJson.lastMessage;
+                    }
+                    return contact;
+                }))
+                setChats(prevChats => [...prevChats, dataJson.newChat]);
                 break;
             default:
                 break;

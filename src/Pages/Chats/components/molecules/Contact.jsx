@@ -1,5 +1,4 @@
 import { ImgProfile } from '../atoms/ImgProfile';
-import img from '../../../../assets/images/profile.jpg'
 import './Contact.css'
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
@@ -12,16 +11,17 @@ const Div = styled.div`
         z-index: 10;
     }
 `;
-export function Contact({ changeChat, data, idContact, contactOnChat, lastMessage, setSection }) {
+export function Contact({ changeChat, data, idContact, contactOnChat, lastMessage, setSection, readMessages }) {
     const [estado, setEstado] = useState(false);
 
     useEffect(() => {
         if (data.estados !== undefined) {
-                    setEstado(true)
+            setEstado(true)
         }
     }, [data.estados]);
 
     const handleContainerClick = () => {
+        readMessages(idContact);
         setEstado(false);
         changeChat(idContact);
     };
@@ -37,7 +37,16 @@ export function Contact({ changeChat, data, idContact, contactOnChat, lastMessag
             <ImgProfile src={data.profilePictureUrl} estado={estado ? '.15vw solid #14c500' : '.15vw  solid #001440'} />
             <div>
                 <span className='lastTime'>{lastMessage?.date}</span>
-                <span className='checkmark'>{lastMessage ? "✓✓" : 'Sin Mensajes'}</span>
+                <span className={`checkmark ${data.noReads > 0 ? "noReads" : ""}`}>{
+                    lastMessage
+                        ?
+                        data.noReads > 0
+                            ? data.noReads
+                            :
+                            "✓✓"
+                        :
+                        'Sin Mensajes'
+                }</span>
             </div>
         </Div>
     )

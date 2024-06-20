@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Contact } from '../molecules/Contact';
 import { useState } from 'react';
 import { ControlsBtns } from '../molecules/ControlsBtns';
+import { useUserContext } from '../../../../context/userAuth';
 const Container = styled.div`
     width: 40vw;
     height: 100vh;
@@ -21,15 +22,16 @@ const Container = styled.div`
         max-height: 93vh;
     }
 `;
-export function Contacts({ contacts, getChat, setSection, chatInUse, setEstados }) {
+export function Contacts({ contacts, setSection, chatInUse, setEstados, idUser2, amigos, readMessages }) {
     const [onChat, setOnChat] = useState('');
+    const { setUser2 } = useUserContext();
     const handleSetOnChat = (idContact) => {
-        const amigos = JSON.parse(localStorage.getItem('amigos'))
-        const idUser2 = localStorage.getItem('idUser2')
         if (idUser2 !== idContact || chatInUse && amigos.includes(idUser2)) {
-            localStorage.setItem("idUser2", idContact);
+            setUser2({
+                idUser2:idContact,
+                idNewContact:false
+            })
             setEstados()
-            getChat(idContact)
             setOnChat(idContact);
         }
     }
@@ -37,7 +39,8 @@ export function Contacts({ contacts, getChat, setSection, chatInUse, setEstados 
         <Container>
             <div className='ContaineContacts'>
                 {
-                    contacts?.map(contact => <Contact setSection={setSection} lastMessage={contact?.lastMessage} changeChat={handleSetOnChat} data={contact} key={contact._id} idContact={contact._id} contactOnChat={onChat} />)
+                    contacts?.map(contact => <Contact readMessages={readMessages} setSection={setSection} lastMessage={contact?.lastMessage} changeChat={handleSetOnChat} data={contact} key={contact._id} idContact={contact._id} contactOnChat={onChat} />)
+                    
                 }
             </div>
             <ControlsBtns setSection={setSection} />

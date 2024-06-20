@@ -5,16 +5,16 @@ import { ProfilesUsables } from '../molecules/ProfilesUsables'
 import './Configuracion.css'
 import icon from "../../../../assets/images/boton-editar.png"
 import axios from 'axios';
-export function Configuracion({ setSection }) {
+import { useUserContext } from '../../../../context/userAuth';
+export function Configuracion({ setSection, User1 }) {
     const [profile, setProfile] = useState("");
     const [username, setUsername] = useState("");
     const [edit, setEdit] = useState(false);
+    const { setUser1 } = useUserContext();
     useEffect(() => {
-        const getUsername = localStorage.getItem('username');
-        const getProfile = localStorage.getItem('profile');
 
-        setUsername(getUsername);
-        setProfile(getProfile);
+        setUsername(User1.username);
+        setProfile(User1.profile);
     }, []);
 
     const handlerEditName = () => {
@@ -26,14 +26,16 @@ export function Configuracion({ setSection }) {
 
     const submit = async (event) => {
         event.preventDefault();
-        const idUser1 = localStorage.getItem("idUser1");
-        const token = localStorage.getItem('token');
-        const amigos = JSON.parse(localStorage.getItem('amigos'));
+        const { idUser1, token, amigos } = User1;
         const headers = { 'Content-Type': 'application/json', 'token': token };
-        let objet = { idUser1: idUser1, amigos: amigos, url: profile, username: username };
-        let body = JSON.stringify(objet);
-        const updateUser = await axios.put("http://localhost:3000/users/updateProfile", body, { headers });
-        console.log(updateUser);
+        
+        setUser1({
+            ...User1,
+            username: username,
+            profile: profile
+        });
+        let body = JSON.stringify({ idUser1: idUser1, amigos: amigos, url: profile, username: username });
+        await axios.put("http://localhost:3000/users/updateProfile", body, { headers });
         setSection('')
     }
     return (

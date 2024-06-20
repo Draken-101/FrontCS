@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Contacts } from "./components/organims/Contacts";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from '../../context/userAuth';
 const Container = styled.div`
     width:98vw;
     height: calc(100vh - 2vw);
@@ -26,14 +27,22 @@ const Container = styled.div`
     }
 `;
 
-export function People({ contacts, setUser2, isAuthenticated }) {
+export function People() {
     const navigate = useNavigate();
+    const { contacts, setContacts, allContacts, setUser2, isAuthenticated } = useUserContext();
+
     if (!isAuthenticated) {
         navigate("/Login")
     }
     return (
         <Container>
-            <Contacts contacts={contacts} setUser2={setUser2} />
+            <Contacts contacts={allContacts}
+                setUser2={(user, data) => {
+                    if (!contacts?.some(contact => contact?._id === user?.idUser2)) {
+                        setContacts(prevContacts => [...prevContacts, data]);
+                    }
+                    setUser2(user);
+                }} />
             <button className="Volver" onClick={() => navigate('/Chats')}>Volver</button>
         </Container>
     )

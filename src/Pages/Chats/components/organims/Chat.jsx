@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { Messages } from '../molecules/Messages'
 import { SendMessage } from '../molecules/SendMessage'
 import './Chat.css'
 
-export function Chat({ chatInUse, sendMessage, estados }) {
+export function Chat({ sendMessage, estados, readMessages }) {
+
     return (
         <div className='Chat'>
             <div className='Estados'>
@@ -14,7 +14,7 @@ export function Chat({ chatInUse, sendMessage, estados }) {
                     <span>Sin estados</span>
                 }
             </div>
-            <Messages mensajes={chatInUse?.mensajes} />
+            <Messages readMessages={readMessages} />
             <SendMessage sendMessage={sendMessage}/>
         </div>
     )
