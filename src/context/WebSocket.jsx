@@ -71,13 +71,21 @@ export const initializeWebSocket = (setChats, setContacts, User1) => {
                 console.log('newMessageSender');
                 newMessageSender(dataJson.newMessage, setChats, setContacts, dataJson.chatId, dataJson.id);
                 break;
-            case "newChat":
-                console.log("newChat");
+            case "newChatReciber":
+                console.log("newChatReciber");
+                setContacts(prevContacts => [...prevContacts, { ...dataJson.newContact, lastMessage:dataJson.lastMessage}]);
+                setChats(prevChats => [...prevChats, dataJson.newChat]);
+                setUser2({
+                    
+                });
+                break;
+            case "newChatSender":
+                console.log("newChatSender");
                 setContacts(prevContacts => prevContacts.map(contact => {
-                    if (contact._id === dataJson.idUser2) {
+                    if (contact._id === dataJson.reciber) {
                         contact.lastMessage = dataJson.lastMessage;
                     }
-                    return contact;
+                    return { ...contact };
                 }))
                 setChats(prevChats => [...prevChats, dataJson.newChat]);
                 break;

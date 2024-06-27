@@ -20,7 +20,7 @@ export function Messages({readMessages}) {
                     }
                     return m;
                 });
-                return {...chat, mensajes: newMessages.filter(message => message !== undefined)}
+                return {...chat, mensajes: newMessages?.filter(message => message !== undefined)}
             }
             return { ...chat };
         }));
@@ -32,7 +32,7 @@ export function Messages({readMessages}) {
         if (containerRef.current) {
             containerRef.current.scrollTop = containerRef.current.scrollHeight;
         }
-    }, [chatInUse.mensajes?.length]);
+    }, [chatInUse?.mensajes?.length]);
 
     const handleDivClick = (event) => {
         if (event.target === event.currentTarget) {
@@ -42,7 +42,7 @@ export function Messages({readMessages}) {
     return (
         <div onClick={handleDivClick} ref={containerRef} className='Messages'>
             {
-                chatInUse.mensajes?.map((mensaje, index) => {
+                chatInUse?.mensajes?.map((mensaje, index) => {
                     if (mensaje?.noReads) {
                         console.log(mensaje);
                         return (
